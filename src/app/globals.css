@@ -1,67 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0a0a;
-  --color-surface: #111111;
-  --color-surface-2: #1a1a1a;
-  --color-border: #222222;
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-accent: #a855f7;
-  --color-text: #fafafa;
-  --color-text-muted: #a1a1aa;
-  --font-sans: "Geist", "Noto Sans Thai", system-ui, sans-serif;
+  /* =========================================
+     ตัวกลางของเว็บ (Global Theme Configuration)
+     คุณสามารถกำหนด ค่าสี ฟอนต์ หรือขนาดต่างๆ ที่ใช้ซ้ำๆ ได้ที่นี่
+  ========================================= */
+  
+  /* ตั้งค่า Noto Sans Thai ให้เป็นฟอนต์หลักของทั้งเว็บ (font-sans) */
+  --font-sans: var(--font-noto-sans-thai), ui-sans-serif, system-ui, sans-serif;
+
+  /* ตัวอย่างการตั้งค่าสีที่เรียกใช้บ่อย (ใช้ class: bg-brand-primary, text-brand-secondary) */
+  --color-brand-primary: #eab308; /* สีเหลือง */
+  --color-brand-secondary: #f59e0b; /* สีเหลืองเข้ม */
+}
+
+html, body {
+  font-family: var(--font-noto-sans-thai), sans-serif !important;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--color-background);
-  color: var(--color-text);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-background);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #333;
-}
-
-/* Selection */
-::selection {
-  background: var(--color-primary);
-  color: white;
-}
-
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glass card utility */
-.glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
 }

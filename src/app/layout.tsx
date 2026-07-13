@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
-import { Geist } from 'next/font/google';
+import { Noto_Sans_Thai } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/layout/Navbar';
 
-const geist = Geist({ subsets: ['latin'] });
+const notoSansThai = Noto_Sans_Thai({ 
+  subsets: ['thai', 'latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-noto-sans-thai',
+});
 
 export const metadata: Metadata = {
-  title: 'SMO Club | สโมสรนักศึกษา',
-  description: 'สโมสรนักศึกษา — แสดงผลงาน สมาชิก และประกาศข่าวสารของเรา',
-  keywords: 'สโมสรนักศึกษา, SMO, Phuket Rajabhat University',
+  title: 'SMO Sci-Tech',
+  description: 'สโมสรนักศึกษาคณะวิทยาศาสตร์และเทคโนโลยี',
 };
 
 export default function RootLayout({
@@ -17,10 +19,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="th" suppressHydrationWarning>
-      <body className={`${geist.className} bg-[#0a0a0a] text-white min-h-screen`}>
-        <Navbar />
-        <main>{children}</main>
+    <html lang="th" suppressHydrationWarning className={`${notoSansThai.variable}`}>
+      <body className={`${notoSansThai.className} antialiased bg-black text-white min-h-screen flex flex-col font-sans`}>
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );
