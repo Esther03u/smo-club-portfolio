@@ -24,7 +24,7 @@ const DotField = memo(({
   const svgRef = useRef(null);
   const glowRef = useRef(null);
   const dotsRef = useRef([]);
-  const mouseRef = useRef({ x: -9999, y: -9999, prevX: -9999, prevY: -9999, speed: 0 });
+  const mouseRef = useRef({ x: -9999, y: -9999, prevX: -9999, prevY: -9999, lerpX: -9999, lerpY: -9999, speed: 0 });
   const rafRef = useRef(null);
   const sizeRef = useRef({ w: 0, h: 0, offsetX: 0, offsetY: 0 });
   const glowOpacity = useRef(0);
@@ -117,6 +117,15 @@ const DotField = memo(({
       frameCount++;
       const dots = dotsRef.current;
       const m = mouseRef.current;
+      
+      if (m.lerpX === -9999) {
+        m.lerpX = m.x;
+        m.lerpY = m.y;
+      } else {
+        m.lerpX += (m.x - m.lerpX) * 0.15;
+        m.lerpY += (m.y - m.lerpY) * 0.15;
+      }
+
       const { w, h } = sizeRef.current;
       const p = propsRef.current;
       const len = dots.length;
@@ -130,8 +139,8 @@ const DotField = memo(({
       glowOpacity.current += (eng - glowOpacity.current) * 0.08;
 
       if (glowEl) {
-        glowEl.setAttribute('cx', m.x);
-        glowEl.setAttribute('cy', m.y);
+        glowEl.setAttribute('cx', m.lerpX);
+        glowEl.setAttribute('cy', m.lerpY);
         glowEl.style.opacity = glowOpacity.current;
       }
 
@@ -151,8 +160,8 @@ const DotField = memo(({
 
       for (let i = 0; i < len; i++) {
         const d = dots[i];
-        const dx = m.x - d.ax;
-        const dy = m.y - d.ay;
+        const dx = m.lerpX - d.ax;
+        const dy = m.lerpY - d.ay;
         const distSq = dx * dx + dy * dy;
 
         if (distSq < crSq && eng > 0.01) {

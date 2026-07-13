@@ -1,0 +1,14 @@
+.scroll-reveal {
+  margin: 0;
+  padding: 0;
+}
+
+.scroll-reveal-text {
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.word {
+  display: inline-block;
+}

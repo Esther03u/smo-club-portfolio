@@ -3,6 +3,7 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './StaggeredMenu.css';
+import GlassSurface from '../GlassSurface/GlassSurface';
 
 export const StaggeredMenu = ({
   position = 'right',
@@ -64,8 +65,8 @@ export const StaggeredMenu = ({
       if (preContainer) {
         gsap.set(preContainer, { xPercent: 0, opacity: 1 });
       }
-      gsap.set(plusH, { transformOrigin: '50% 50%', rotate: 0 });
-      gsap.set(plusV, { transformOrigin: '50% 50%', rotate: 90 });
+      gsap.set(plusH, { xPercent: -50, yPercent: -50, rotate: 0 });
+      gsap.set(plusV, { xPercent: -50, yPercent: -50, rotate: 90 });
       gsap.set(icon, { rotate: 0, transformOrigin: '50% 50%' });
       gsap.set(textInner, { yPercent: 0 });
       if (toggleBtnRef.current) gsap.set(toggleBtnRef.current, { color: menuButtonColor });
@@ -371,6 +372,17 @@ export const StaggeredMenu = ({
         })()}
       </div>
       <header className="staggered-menu-header" aria-label="Main navigation header">
+        <GlassSurface
+          width="100%"
+          height="100%"
+          borderRadius={16}
+          blur={15}
+          opacity={0.8}
+          brightness={50}
+          displace={15}
+          distortionScale={-150}
+          style={{ position: 'absolute', top: 0, left: 0, zIndex: -1 }}
+        />
         <div className="sm-logo" aria-label="Logo">
           <img
             src={logoUrl || '/src/assets/logos/reactbits-gh-white.svg'}

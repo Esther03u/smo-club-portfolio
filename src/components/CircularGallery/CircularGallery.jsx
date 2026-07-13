@@ -130,24 +130,38 @@ function createTextTexture(gl, text, font = 'bold 30px monospace', color = 'blac
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
   context.font = font;
-  const metrics = context.measureText(text);
-  const textWidth = Math.ceil(metrics.width);
-  const textHeight = Math.ceil(getFontSize(font) * 1.2);
-  canvas.width = textWidth + 20;
-  canvas.height = textHeight + 20;
+
+  const lines = text ? text.split('\n') : [''];
+  let maxWidth = 0;
+  lines.forEach(line => {
+    const metrics = context.measureText(line);
+    if (metrics.width > maxWidth) maxWidth = metrics.width;
+  });
+
+  const fontSize = getFontSize(font);
+  const lineHeight = Math.ceil(fontSize * 1.5); // Increased line height for Thai characters
+  const textWidth = Math.ceil(maxWidth);
+  const textHeight = lineHeight * lines.length;
+
+  canvas.width = textWidth + 40; // More padding
+  canvas.height = textHeight + 40;
   context.font = font;
   context.fillStyle = color;
   context.textBaseline = 'middle';
   context.textAlign = 'center';
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+  lines.forEach((line, i) => {
+    context.fillText(line, canvas.width / 2, (i * lineHeight) + (lineHeight / 2) + 20);
+  });
+
   const texture = new Texture(gl, { generateMipmaps: false });
   texture.image = canvas;
-  return { texture, width: canvas.width, height: canvas.height };
+  return { texture, width: canvas.width, height: canvas.height, lines: lines.length };
 }
 
 class Title {
-  constructor({ gl, plane, renderer, text, textColor = '#545050', font = '30px sans-serif' }) {
+  constructor({ gl, plane, renderer, text, textColor = '#545050', font = '30px sans-serif', yOffsetMultiplier = 1, yPadding = -0.05, sizeMultiplier = 1 }) {
     autoBind(this);
     this.gl = gl;
     this.plane = plane;
@@ -155,10 +169,13 @@ class Title {
     this.text = text;
     this.textColor = textColor;
     this.font = font;
+    this.yOffsetMultiplier = yOffsetMultiplier;
+    this.yPadding = yPadding;
+    this.sizeMultiplier = sizeMultiplier;
     this.createMesh();
   }
   createMesh() {
-    const { texture, width, height } = createTextTexture(this.gl, this.text, this.font, this.textColor);
+    const { texture, width, height, lines } = createTextTexture(this.gl, this.text, this.font, this.textColor);
     const geometry = new Plane(this.gl);
     const program = new Program(this.gl, {
       vertex: `
@@ -183,14 +200,26 @@ class Title {
         }
       `,
       uniforms: { tMap: { value: texture } },
-      transparent: true
+      transparent: true,
+      depthTest: false,
+      depthWrite: false
     });
     this.mesh = new Mesh(this.gl, { geometry, program });
     const aspect = width / height;
-    const textHeight = this.plane.scale.y * 0.15;
+    const textHeight = this.plane.scale.y * 0.15 * (lines || 1) * this.sizeMultiplier;
     const textWidth = textHeight * aspect;
+
     this.mesh.scale.set(textWidth, textHeight, 1);
-    this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeight * 0.5 - 0.05;
+    
+    // Position text: if yOffsetMultiplier is negative, place it at the bottom outside. 
+    // If yOffsetMultiplier is positive, place it ABOVE the card outside.
+    if (this.yOffsetMultiplier < 0) {
+      this.mesh.position.y = -this.plane.scale.y * 0.5 - textHeight * 0.5 + this.yPadding;
+    } else {
+      this.mesh.position.y = this.plane.scale.y * 0.5 + textHeight * 0.5 + this.yPadding;
+    }
+    
+    this.mesh.position.z = 0.1; // Ensure text is drawn in front of the card
     this.mesh.setParent(this.plane);
   }
 }
@@ -206,6 +235,7 @@ class Media {
     scene,
     screen,
     text,
+    positionText,
     viewport,
     bend,
     textColor,
@@ -222,6 +252,7 @@ class Media {
     this.scene = scene;
     this.screen = screen;
     this.text = text;
+    this.positionText = positionText;
     this.viewport = viewport;
     this.bend = bend;
     this.textColor = textColor;
@@ -320,8 +351,24 @@ class Media {
       renderer: this.renderer,
       text: this.text,
       textColor: this.textColor,
-      font: this.font
+      font: this.font,
+      yOffsetMultiplier: -1,
+      yPadding: -0.05
     });
+
+    if (this.positionText) {
+      this.positionTitle = new Title({
+        gl: this.gl,
+        plane: this.plane,
+        renderer: this.renderer,
+        text: this.positionText,
+        textColor: '#eab308', // Yellow color for position
+        font: this.font,
+        yOffsetMultiplier: 1,
+        yPadding: 0.1,
+        sizeMultiplier: 1.4 // Make position text 40% larger
+      });
+    }
   }
   update(scroll, direction) {
     this.plane.position.x = this.x - scroll.current - this.extra;
@@ -373,8 +420,8 @@ class Media {
       }
     }
     this.scale = this.screen.height / 1500;
-    this.plane.scale.y = (this.viewport.height * (900 * this.scale)) / this.screen.height;
-    this.plane.scale.x = (this.viewport.width * (700 * this.scale)) / this.screen.width;
+    this.plane.scale.y = (this.viewport.height * (750 * this.scale)) / this.screen.height;
+    this.plane.scale.x = (this.viewport.width * (550 * this.scale)) / this.screen.width;
     this.plane.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
     this.padding = 2;
     this.width = this.plane.scale.x + this.padding;
@@ -436,22 +483,18 @@ class App {
   }
   createMedias(items, bend = 1, textColor, borderRadius, font) {
     const defaultItems = [
-      { image: `https://picsum.photos/seed/1/800/600?grayscale`, text: 'Bridge' },
-      { image: `https://picsum.photos/seed/2/800/600?grayscale`, text: 'Desk Setup' },
-      { image: `https://picsum.photos/seed/3/800/600?grayscale`, text: 'Waterfall' },
-      { image: `https://picsum.photos/seed/4/800/600?grayscale`, text: 'Strawberries' },
-      { image: `https://picsum.photos/seed/5/800/600?grayscale`, text: 'Deep Diving' },
-      { image: `https://picsum.photos/seed/16/800/600?grayscale`, text: 'Train Track' },
-      { image: `https://picsum.photos/seed/17/800/600?grayscale`, text: 'Santorini' },
-      { image: `https://picsum.photos/seed/8/800/600?grayscale`, text: 'Blurry Lights' },
-      { image: `https://picsum.photos/seed/9/800/600?grayscale`, text: 'New York' },
-      { image: `https://picsum.photos/seed/10/800/600?grayscale`, text: 'Good Boy' },
-      { image: `https://picsum.photos/seed/21/800/600?grayscale`, text: 'Coastline' },
-      { image: `https://picsum.photos/seed/12/800/600?grayscale`, text: 'Palm Trees' }
+      { image: 'https://picsum.photos/seed/m1/800/600?grayscale', position: 'นายกสโมสรนักศึกษา', name: 'นายภูธเนศ เปรมปรีดิ์', major: 'เทคโนโลยีสารสนเทศ', year: 'ชั้นปีที่ 3' },
+      { image: 'https://picsum.photos/seed/m2/800/600?grayscale', position: 'รองนายกสโมสรนักศึกษา', name: 'นางสาวสมหญิง ใจดี', major: 'วิทยาการคอมพิวเตอร์', year: 'ชั้นปีที่ 3' },
+      { image: 'https://picsum.photos/seed/m3/800/600?grayscale', position: 'เลขานุการ', name: 'นายรักดี เรียนเก่ง', major: 'คณิตศาสตร์ประยุกต์', year: 'ชั้นปีที่ 2' },
+      { image: 'https://picsum.photos/seed/m4/800/600?grayscale', position: 'เหรัญญิก', name: 'นางสาวนับเงิน ทองมาก', major: 'เทคโนโลยีสารสนเทศ', year: 'ชั้นปีที่ 2' },
+      { image: 'https://picsum.photos/seed/m5/800/600?grayscale', position: 'ฝ่ายกิจกรรม', name: 'นายสายเที่ยว ชอบลุย', major: 'วิทยาศาสตร์สิ่งแวดล้อม', year: 'ชั้นปีที่ 2' },
+      { image: 'https://picsum.photos/seed/m6/800/600?grayscale', position: 'ฝ่ายประชาสัมพันธ์', name: 'นางสาวพูดเก่ง เสียงใส', major: 'เทคโนโลยีการสื่อสาร', year: 'ชั้นปีที่ 2' },
     ];
-    const galleryItems = items && items.length ? items : defaultItems;
+    const galleryItems = items && items.length > 0 ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
     this.medias = this.mediasImages.map((data, index) => {
+      const displayText = data.name ? `${data.name}\n${data.major} ${data.year}` : data.text;
+      const displayPosition = data.position || null;
       return new Media({
         geometry: this.planeGeometry,
         gl: this.gl,
@@ -461,7 +504,8 @@ class App {
         renderer: this.renderer,
         scene: this.scene,
         screen: this.screen,
-        text: data.text,
+        text: displayText,
+        positionText: displayPosition,
         viewport: this.viewport,
         bend,
         textColor,
@@ -469,7 +513,7 @@ class App {
         font
       });
     });
-  }
+  };
   onTouchDown(e) {
     this.isDown = true;
     this.scroll.position = this.scroll.current;
