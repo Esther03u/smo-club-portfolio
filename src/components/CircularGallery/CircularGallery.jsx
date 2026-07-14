@@ -362,10 +362,6 @@ class Media {
     img.crossOrigin = 'anonymous';
     
     let imgUrl = this.image;
-    // Use Next.js image optimization API for local images
-    if (imgUrl.startsWith('/') && !imgUrl.startsWith('/_next')) {
-      imgUrl = `/_next/image?url=${encodeURIComponent(imgUrl)}&w=1080&q=75`;
-    }
     
     img.src = imgUrl;
     img.onload = () => {

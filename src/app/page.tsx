@@ -29,7 +29,7 @@ const logoSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"
 
 const members = [
   {
-    image: '/members/1.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/1.webp',
     position: 'นายกสโมสรนักศึกษา',
     name: 'นางสาวชรินพัทร อินทร์ปั๋น',
     nickname: 'เนย',
@@ -37,7 +37,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/2.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/2.webp',
     position: 'อุปนายก',
     name: 'นายเศกศรัญ บุญสนอง',
     nickname: 'ไอซ์',
@@ -45,7 +45,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/12.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/12.webp',
     position: 'ฝ่ายวิชาการและงานทะเบียน',
     name: 'นางสาวกมลชนก หมื่นอินทร์',
     nickname: 'ออม',
@@ -53,7 +53,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/15.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/15.webp',
     position: 'ฝ่ายแผนงานงบประมาณ',
     name: 'นายอครินทร์ หนูชู',
     nickname: 'อันซีน',
@@ -61,7 +61,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/10.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/10.webp',
     position: 'ฝ่ายบริหารและงานบุคคล',
     name: 'นายธนวัฒน์ ดำสุด',
     nickname: 'โอโซน',
@@ -69,7 +69,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/7.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/7.webp',
     position: 'ฝ่ายกิจกรรม กีฬาและสันทนาการ',
     name: 'นายธนกฤต รัตนแก้ว',
     nickname: 'สอง',
@@ -77,7 +77,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/6.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/6.webp',
     position: 'ฝ่ายศิลปะและวัฒนธรรม',
     name: 'นางสาวอุมาพร สีพาไชย',
     nickname: 'หยก',
@@ -85,7 +85,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/8.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/8.webp',
     position: 'ฝ่ายบริการและสวัสดิการ',
     name: 'นางสาวฟีรฮาณา จิมาน',
     nickname: 'ฮาน่า',
@@ -93,7 +93,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/3.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/3.webp',
     position: 'ฝ่ายโสตทัศนูปกรณ์',
     name: 'นายอาทิตย์ ข้อยุ่น',
     nickname: 'เจ๋ง',
@@ -101,7 +101,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/14.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/14.webp',
     position: 'ฝ่ายอาคารสถานที่',
     name: 'นายพิชญะ จินดำ',
     nickname: 'กาย',
@@ -109,7 +109,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/13.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/13.webp',
     position: 'ฝ่ายประชาสัมพันธ์',
     name: 'นายชยานันท์ มีเทียน',
     nickname: 'ฟิวส์',
@@ -117,7 +117,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/5.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/5.webp',
     position: 'คณะกรรมการ',
     name: 'นายสหรัฐ อุทรัง',
     nickname: 'ต้อง',
@@ -125,7 +125,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/9.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/9.webp',
     position: 'คณะกรรมการ',
     name: 'นางสาวกาญจน์ณัฏฐา สงวนศักดิ์',
     nickname: 'กิมหยก',
@@ -133,7 +133,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/11.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/11.webp',
     position: 'เหรัญญิก',
     name: 'นายพสิษฐ์ แพรงาม',
     nickname: 'โชกุน',
@@ -141,7 +141,7 @@ const members = [
     year: ''
   },
   {
-    image: '/members/4.png',
+    image: 'https://oxlgoaoqwlzhdwxypyrq.supabase.co/storage/v1/object/public/members/4.webp',
     position: 'เลขานุการ',
     name: 'นางสาวมนัสพร จีนเดิม',
     nickname: 'เตย',
