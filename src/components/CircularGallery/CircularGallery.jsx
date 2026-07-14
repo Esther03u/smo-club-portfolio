@@ -206,8 +206,16 @@ class Title {
     });
     this.mesh = new Mesh(this.gl, { geometry, program });
     const aspect = width / height;
-    const textHeight = this.plane.scale.y * 0.15 * (lines || 1) * this.sizeMultiplier;
-    const textWidth = textHeight * aspect;
+    let textHeight = this.plane.scale.y * 0.15 * (lines || 1) * this.sizeMultiplier;
+    let textWidth = textHeight * aspect;
+
+    // Prevent text from overflowing the card width
+    const maxTextWidth = this.plane.scale.x * 0.95;
+    if (textWidth > maxTextWidth) {
+      const scaleDown = maxTextWidth / textWidth;
+      textWidth *= scaleDown;
+      textHeight *= scaleDown;
+    }
 
     this.mesh.scale.set(textWidth, textHeight, 1);
     
@@ -265,7 +273,8 @@ class Media {
   }
   createShader() {
     const texture = new Texture(this.gl, {
-      generateMipmaps: true
+      generateMipmaps: true,
+      anisotropy: 16
     });
     this.program = new Program(this.gl, {
       depthTest: false,
@@ -365,8 +374,8 @@ class Media {
         textColor: '#eab308', // Yellow color for position
         font: this.font,
         yOffsetMultiplier: 1,
-        yPadding: 0.1,
-        sizeMultiplier: 1.4 // Make position text 40% larger
+        yPadding: 0.02,
+        sizeMultiplier: 1.6 // Make position text even larger
       });
     }
   }
@@ -461,7 +470,7 @@ class App {
     this.renderer = new Renderer({
       alpha: true,
       antialias: true,
-      dpr: Math.min(window.devicePixelRatio || 1, 2)
+      dpr: Math.max(window.devicePixelRatio || 1, 2)
     });
     this.gl = this.renderer.gl;
     this.gl.clearColor(0, 0, 0, 0);
@@ -493,7 +502,9 @@ class App {
     const galleryItems = items && items.length > 0 ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
     this.medias = this.mediasImages.map((data, index) => {
-      const displayText = data.name ? `${data.name}\n${data.major} ${data.year}` : data.text;
+      const hasMajorOrYear = data.major || data.year;
+      const majorYearText = hasMajorOrYear ? `\n${data.major || ''} ${data.year || ''}`.trimEnd() : '';
+      const displayText = data.name ? `${data.name}${majorYearText}` : data.text;
       const displayPosition = data.position || null;
       return new Media({
         geometry: this.planeGeometry,

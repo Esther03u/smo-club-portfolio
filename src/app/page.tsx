@@ -28,40 +28,109 @@ const logoSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"
 
 const members = [
   {
-    id: 1,
-    name: 'นายสมชาย ใจดี',
-    role: 'นายกสโมสรนักศึกษา',
-    image: 'https://i.pravatar.cc/300?img=11',
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_1.jpg',
+    position: 'นายกสโมสรนักศึกษา',
+    name: 'นางสาวชรินพัทร อินทร์ปั๋น',
+    major: '',
+    year: ''
   },
   {
-    id: 2,
-    name: 'นางสาวสมหญิง รักเรียน',
-    role: 'รองนายกสโมสรนักศึกษา',
-    image: 'https://i.pravatar.cc/300?img=5',
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_2.jpg',
+    position: 'อุปนายก',
+    name: 'นายเศกศรัญ บุญสนอง',
+    major: '',
+    year: ''
   },
   {
-    id: 3,
-    name: 'นายกิตติ เก่งกาจ',
-    role: 'เลขานุการ',
-    image: 'https://i.pravatar.cc/300?img=15',
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_12.jpg',
+    position: 'ฝ่ายวิชาการและงานทะเบียน',
+    name: 'นางสาวกมลชนก หมื่นอินทร์',
+    major: '',
+    year: ''
   },
   {
-    id: 4,
-    name: 'นางสาวมาลี สีสวย',
-    role: 'เหรัญญิก',
-    image: 'https://i.pravatar.cc/300?img=9',
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_15.jpg',
+    position: 'ฝ่ายแผนงานงบประมาณ',
+    name: 'นายอครินทร์ หนูชู',
+    major: '',
+    year: ''
   },
   {
-    id: 5,
-    name: 'นายชาญชัย ชาญวิทย์',
-    role: 'ฝ่ายกิจกรรม',
-    image: 'https://i.pravatar.cc/300?img=33',
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_10.jpg',
+    position: 'ฝ่ายบริหารและงานบุคคล',
+    name: 'นายธนวัฒน์ ดำสุด',
+    major: '',
+    year: ''
   },
   {
-    id: 6,
-    name: 'นางสาววิไล ไว้วางใจ',
-    role: 'ฝ่ายประชาสัมพันธ์',
-    image: 'https://i.pravatar.cc/300?img=24',
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_7.jpg',
+    position: 'ฝ่ายกิจกรรม กีฬาและสันทนาการ',
+    name: 'นายธนกฤต รัตนแก้ว',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_6.jpg',
+    position: 'ฝ่ายศิลปะและวัฒนธรรม',
+    name: 'นางสาวอุมาพร สีพาไชย',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_8.jpg',
+    position: 'ฝ่ายบริการและสวัสดิการ',
+    name: 'นางสาวฟีรฮาณา จิมาน',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_3.jpg',
+    position: 'ฝ่ายโสตทัศนูปกรณ์',
+    name: 'นายอาทิตย์ ข้อยุ่น',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_14.jpg',
+    position: 'ฝ่ายอาคารสถานที่',
+    name: 'นายพิชญะ จินดำ',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_13.jpg',
+    position: 'ฝ่ายประชาสัมพันธ์',
+    name: 'นายชยานันท์ มีเทียน',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_4.jpg',
+    position: 'คณะกรรมการ',
+    name: 'นายสหรัฐ อุทรัง',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_9.jpg',
+    position: 'คณะกรรมการ',
+    name: 'นางสาวกาญจน์ณัฏฐา สงวนศักดิ์',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_11.jpg',
+    position: 'เหรัญญิก',
+    name: 'นายพสิษฐ์ แพรงาม',
+    major: '',
+    year: ''
+  },
+  {
+    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_5.jpg',
+    position: 'เลขานุการ',
+    name: 'นางสาวมนัสพร จีนเดิม',
+    major: '',
+    year: ''
   },
 ];
 
@@ -221,14 +290,15 @@ export default function HomePage() {
         </section>
 
         {/* MEMBERS SECTION */}
-        <section id="members" className="py-32 px-6 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center relative z-20">
+        <section id="members" className="min-h-[100dvh] flex flex-col items-center justify-center py-20 md:py-32 relative z-10 overflow-hidden w-full">
+          <div className="w-full flex flex-col items-center justify-center">
+            <div className="text-center relative z-20 w-full px-6">
               <h2 className="text-4xl md:text-5xl font-bold">สมาชิกในสโมสร</h2>
             </div>
 
-            <div style={{ height: '600px' }} className="w-full -mt-32 relative z-10">
+            <div style={{ height: '600px' }} className="w-full -mt-16 md:-mt-32 relative z-10">
               <CircularGallery
+                items={members}
                 bend={1}
                 textColor="#ffffff"
                 borderRadius={0.05}
