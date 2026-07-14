@@ -1,7 +1,8 @@
 'use client';
 
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ShinyText from '../ShinyText/ShinyText';
 
 import './CircularGallery.css';
 
@@ -24,6 +25,13 @@ function autoBind(instance) {
       instance[key] = instance[key].bind(instance);
     }
   });
+}
+
+function hexToRgb(hex) {
+  hex = hex.replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const num = parseInt(hex, 16);
+  return [(num >> 16) / 255, ((num >> 8) & 255) / 255, (num & 255) / 255];
 }
 
 const DEFAULT_FONT = 'bold 30px Figtree';
@@ -192,14 +200,18 @@ class Title {
       fragment: `
         precision highp float;
         uniform sampler2D tMap;
+        uniform float uAlpha;
         varying vec2 vUv;
         void main() {
           vec4 color = texture2D(tMap, vUv);
           if (color.a < 0.1) discard;
-          gl_FragColor = color;
+          gl_FragColor = vec4(color.rgb, color.a * uAlpha);
         }
       `,
-      uniforms: { tMap: { value: texture } },
+      uniforms: { 
+        tMap: { value: texture },
+        uAlpha: { value: 1.0 }
+      },
       transparent: true,
       depthTest: false,
       depthWrite: false
@@ -248,7 +260,8 @@ class Media {
     bend,
     textColor,
     borderRadius = 0,
-    font
+    font,
+    imageBgColor = '#FDF6E3'
   }) {
     this.extra = 0;
     this.geometry = geometry;
@@ -266,6 +279,7 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.imageBgColor = imageBgColor;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -301,6 +315,7 @@ class Media {
         uniform vec2 uPlaneSizes;
         uniform sampler2D tMap;
         uniform float uBorderRadius;
+        uniform vec3 uImageBgColor;
         varying vec2 vUv;
         
         float roundedBoxSDF(vec2 p, vec2 b, float r) {
@@ -323,9 +338,13 @@ class Media {
           
           // Smooth antialiasing for edges
           float edgeSmooth = 0.002;
-          float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
+          float alphaMask = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
           
-          gl_FragColor = vec4(color.rgb, alpha);
+          // Use the alpha channel to reveal the cream background for PNGs
+          // JPGs will just render normally because their alpha is 1.0
+          vec3 finalRgb = mix(uImageBgColor, color.rgb, color.a);
+          
+          gl_FragColor = vec4(finalRgb, alphaMask);
         }
       `,
       uniforms: {
@@ -334,7 +353,8 @@ class Media {
         uImageSizes: { value: [0, 0] },
         uSpeed: { value: 0 },
         uTime: { value: 100 * Math.random() },
-        uBorderRadius: { value: this.borderRadius }
+        uBorderRadius: { value: this.borderRadius },
+        uImageBgColor: { value: hexToRgb(this.imageBgColor) }
       },
       transparent: true
     });
@@ -419,6 +439,13 @@ class Media {
       this.extra += this.widthTotal;
       this.isBefore = this.isAfter = false;
     }
+
+    const d = Math.abs(this.plane.position.x);
+    const centerFade = Math.min(1.0, d / 0.5); // Fades out when within 0.5 units of center
+    
+    if (this.title && this.title.mesh) {
+        this.title.mesh.program.uniforms.uAlpha.value = centerFade;
+    }
   }
   onResize({ screen, viewport } = {}) {
     if (screen) this.screen = screen;
@@ -448,6 +475,7 @@ class App {
       textColor = '#ffffff',
       borderRadius = 0,
       font = 'bold 30px Figtree',
+      imageBgColor = '#FDF6E3',
       scrollSpeed = 2,
       scrollEase = 0.05
     } = {}
@@ -462,7 +490,7 @@ class App {
     this.createScene();
     this.onResize();
     this.createGeometry();
-    this.createMedias(items, bend, textColor, borderRadius, font);
+    this.createMedias(items, bend, textColor, borderRadius, font, imageBgColor);
     this.update();
     this.addEventListeners();
   }
@@ -490,7 +518,7 @@ class App {
       widthSegments: 100
     });
   }
-  createMedias(items, bend = 1, textColor, borderRadius, font) {
+  createMedias(items, bend = 1, textColor, borderRadius, font, imageBgColor) {
     const defaultItems = [
       { image: 'https://picsum.photos/seed/m1/800/600?grayscale', position: 'นายกสโมสรนักศึกษา', name: 'นายภูธเนศ เปรมปรีดิ์', major: 'เทคโนโลยีสารสนเทศ', year: 'ชั้นปีที่ 3' },
       { image: 'https://picsum.photos/seed/m2/800/600?grayscale', position: 'รองนายกสโมสรนักศึกษา', name: 'นางสาวสมหญิง ใจดี', major: 'วิทยาการคอมพิวเตอร์', year: 'ชั้นปีที่ 3' },
@@ -502,9 +530,23 @@ class App {
     const galleryItems = items && items.length > 0 ? items : defaultItems;
     this.mediasImages = galleryItems.concat(galleryItems);
     this.medias = this.mediasImages.map((data, index) => {
-      const hasMajorOrYear = data.major || data.year;
-      const majorYearText = hasMajorOrYear ? `\n${data.major || ''} ${data.year || ''}`.trimEnd() : '';
-      const displayText = data.name ? `${data.name}${majorYearText}` : data.text;
+      let nickname = data.nickname || '';
+      let major = data.major || '';
+      
+      // Auto-detect if major is being used as a nickname (short, no year)
+      if (!nickname && major && major.length < 20 && !data.year && !major.includes('วิทยา')) {
+        nickname = major;
+        major = '';
+      }
+
+      const hasMajorOrYear = major || data.year;
+      const majorYearText = hasMajorOrYear ? `\n${major} ${data.year || ''}`.trimEnd() : '';
+      
+      let displayText = data.name ? `${data.name}${majorYearText}` : data.text;
+      if (nickname) {
+        displayText = `${nickname}\n${displayText}`;
+      }
+      
       const displayPosition = data.position || null;
       return new Media({
         geometry: this.planeGeometry,
@@ -521,7 +563,8 @@ class App {
         bend,
         textColor,
         borderRadius,
-        font
+        font,
+        imageBgColor
       });
     });
   };
@@ -597,9 +640,31 @@ class App {
   update() {
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const direction = this.scroll.current > this.scroll.last ? 'right' : 'left';
+    
+    let closestIndex = 0;
+    let minD = Infinity;
+
     if (this.medias) {
-      this.medias.forEach(media => media.update(this.scroll, direction));
+      this.medias.forEach(media => {
+        media.update(this.scroll, direction);
+        const d = Math.abs(media.plane.position.x);
+        if (d < minD) {
+          minD = d;
+          closestIndex = media.index;
+        }
+      });
     }
+
+    if (this.onActiveChange && this.lastClosestIndex !== closestIndex) {
+      this.lastClosestIndex = closestIndex;
+      this.onActiveChange(closestIndex % (this.mediasImages ? this.mediasImages.length / 2 : 1));
+    }
+    
+    if (this.onCenterProgress) {
+      const progress = Math.max(0, 1.0 - (minD / 0.5));
+      this.onCenterProgress(progress);
+    }
+
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
@@ -661,10 +726,14 @@ export default function CircularGallery({
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   fontUrl,
+  imageBgColor = '#FDF6E3',
   scrollSpeed = 2,
   scrollEase = 0.05
 }) {
   const containerRef = useRef(null);
+  const overlayRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
   useEffect(() => {
     if (!containerRef.current) return;
     let app;
@@ -677,23 +746,73 @@ export default function CircularGallery({
         textColor,
         borderRadius,
         font: resolvedFont,
+        imageBgColor,
         scrollSpeed,
         scrollEase
       });
+      app.onActiveChange = (idx) => {
+        setActiveIndex(idx);
+      };
+      app.onCenterProgress = (progress) => {
+        if (overlayRef.current) {
+          overlayRef.current.style.opacity = progress;
+        }
+      };
     });
 
     return () => {
       isMounted = false;
       if (app) app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, fontUrl, imageBgColor, scrollSpeed, scrollEase]);
+
+  const activeItem = items && items.length > 0 ? items[activeIndex] : null;
+
   return (
-    <div
-      className="circular-gallery"
-      ref={containerRef}
-      tabIndex={0}
-      role="region"
-      aria-label="Circular image gallery. Use left and right arrow keys to navigate."
-    />
+    <div className="relative w-full h-full">
+      <div
+        className="circular-gallery w-full h-full"
+        ref={containerRef}
+        tabIndex={0}
+        role="region"
+        aria-label="Circular image gallery. Use left and right arrow keys to navigate."
+      />
+      
+      <div 
+        ref={overlayRef}
+        className="absolute left-1/2 top-[76%] md:top-[80%] -translate-x-1/2 pointer-events-none flex flex-col items-center justify-center text-center w-[120%]"
+        style={{ opacity: 0 }}
+      >
+        {activeItem && (
+          <>
+            {activeItem.nickname && (
+              <ShinyText 
+                text={activeItem.nickname} 
+                speed={3} 
+                className="text-2xl md:text-3xl font-bold mb-1" 
+                color="#ffffff" 
+                shineColor="#eab308" 
+              />
+            )}
+            <ShinyText 
+              text={activeItem.name || activeItem.text} 
+              speed={3} 
+              className="text-lg md:text-2xl font-bold" 
+              color="#ffffff" 
+              shineColor="#eab308" 
+            />
+            {(activeItem.major || activeItem.year) && (
+              <ShinyText 
+                text={`${activeItem.major || ''} ${activeItem.year || ''}`.trim()} 
+                speed={3} 
+                className="text-xs md:text-sm font-normal mt-1 opacity-80" 
+                color="#ffffff" 
+                shineColor="#eab308" 
+              />
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
