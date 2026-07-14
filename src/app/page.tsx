@@ -25,7 +25,7 @@ const socialItems = [
   { label: 'Line', link: 'https://line.me' }
 ];
 
-const logoSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="40"><text x="0" y="28" font-family="sans-serif" font-size="24" font-weight="bold" fill="white">SMO SCI-TECH</text></svg>`;
+const logoSvg = '/logo.png';
 
 const members = [
   {

@@ -389,8 +389,7 @@ export const StaggeredMenu = ({
             alt="Logo"
             className="sm-logo-img"
             draggable={false}
-            width={110}
-            height={24}
+            style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
           />
         </div>
         <button
