@@ -15,9 +15,7 @@ import Carousel from '../components/Carousel';
 const menuItems = [
   { label: 'หน้าแรก', ariaLabel: 'Go to home page', link: '#home' },
   { label: 'สมาชิก', ariaLabel: 'Members', link: '#members' },
-  { label: 'ติดต่อเรา', ariaLabel: 'Contact us', link: '#contact' },
-  { label: 'ร้องเรียน', ariaLabel: 'Report or complain', link: '#report' },
-  { label: 'เข้าสู่ระบบ', ariaLabel: 'Login', link: '#login' }
+  { label: 'ติดต่อเรา', ariaLabel: 'Contact us', link: '#contact' }
 ];
 
 const socialItems = [
@@ -250,7 +248,7 @@ export default function HomePage() {
           <div className="w-full max-w-6xl flex flex-col items-center relative z-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-center w-[85%] sm:w-[90%] mx-auto">ช่องทางการติดต่อ</h2>
             <p className="text-sm sm:text-base md:text-lg text-zinc-400 w-[85%] sm:w-[90%] sm:max-w-2xl text-center mx-auto leading-relaxed mb-6 sm:mb-8">
-              หากมีข้อสงสัย เสนอแนะกิจกรรม หรือต้องการแจ้งเรื่องร้องเรียน สามารถติดต่อเราได้ตามช่องทางด้านล่างนี้
+              หากมีข้อสงสัย หรือเสนอแนะกิจกรรม สามารถติดต่อเราได้ตามช่องทางด้านล่างนี้
             </p>
             
             <p className="text-xs text-zinc-500 uppercase tracking-widest font-medium animate-pulse text-center relative z-20 mt-8 sm:mt-12">
