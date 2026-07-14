@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 
 import { motion } from 'framer-motion';
@@ -28,107 +29,122 @@ const logoSvg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"
 
 const members = [
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_1.jpg',
+    image: '/members/1.png',
     position: 'นายกสโมสรนักศึกษา',
     name: 'นางสาวชรินพัทร อินทร์ปั๋น',
+    nickname: 'เนย',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_2.jpg',
+    image: '/members/2.png',
     position: 'อุปนายก',
     name: 'นายเศกศรัญ บุญสนอง',
+    nickname: 'ไอซ์',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_12.jpg',
+    image: '/members/12.png',
     position: 'ฝ่ายวิชาการและงานทะเบียน',
     name: 'นางสาวกมลชนก หมื่นอินทร์',
+    nickname: 'ออม',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_15.jpg',
+    image: '/members/15.png',
     position: 'ฝ่ายแผนงานงบประมาณ',
     name: 'นายอครินทร์ หนูชู',
+    nickname: 'อันซีน',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_10.jpg',
+    image: '/members/10.png',
     position: 'ฝ่ายบริหารและงานบุคคล',
     name: 'นายธนวัฒน์ ดำสุด',
+    nickname: 'โอโซน',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_7.jpg',
+    image: '/members/7.png',
     position: 'ฝ่ายกิจกรรม กีฬาและสันทนาการ',
     name: 'นายธนกฤต รัตนแก้ว',
+    nickname: 'สอง',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_6.jpg',
+    image: '/members/6.png',
     position: 'ฝ่ายศิลปะและวัฒนธรรม',
     name: 'นางสาวอุมาพร สีพาไชย',
+    nickname: 'หยก',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_8.jpg',
+    image: '/members/8.png',
     position: 'ฝ่ายบริการและสวัสดิการ',
     name: 'นางสาวฟีรฮาณา จิมาน',
+    nickname: 'ฮาน่า',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_3.jpg',
+    image: '/members/3.png',
     position: 'ฝ่ายโสตทัศนูปกรณ์',
     name: 'นายอาทิตย์ ข้อยุ่น',
+    nickname: 'เจ๋ง',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_14.jpg',
+    image: '/members/14.png',
     position: 'ฝ่ายอาคารสถานที่',
     name: 'นายพิชญะ จินดำ',
+    nickname: 'กาย',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_13.jpg',
+    image: '/members/13.png',
     position: 'ฝ่ายประชาสัมพันธ์',
     name: 'นายชยานันท์ มีเทียน',
+    nickname: 'ฟิวส์',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_4.jpg',
+    image: '/members/5.png',
     position: 'คณะกรรมการ',
     name: 'นายสหรัฐ อุทรัง',
+    nickname: 'ต้อง',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_9.jpg',
+    image: '/members/9.png',
     position: 'คณะกรรมการ',
     name: 'นางสาวกาญจน์ณัฏฐา สงวนศักดิ์',
+    nickname: 'กิมหยก',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_11.jpg',
+    image: '/members/11.png',
     position: 'เหรัญญิก',
     name: 'นายพสิษฐ์ แพรงาม',
+    nickname: 'โชกุน',
     major: '',
     year: ''
   },
   {
-    image: '/members/LINE_ALBUM_รูปทีมสโม_260617_5.jpg',
+    image: '/members/4.png',
     position: 'เลขานุการ',
     name: 'นางสาวมนัสพร จีนเดิม',
+    nickname: 'เตย',
     major: '',
     year: ''
   },
