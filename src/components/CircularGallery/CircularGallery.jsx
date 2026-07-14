@@ -360,7 +360,14 @@ class Media {
     });
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = this.image;
+    
+    let imgUrl = this.image;
+    // Use Next.js image optimization API for local images
+    if (imgUrl.startsWith('/') && !imgUrl.startsWith('/_next')) {
+      imgUrl = `/_next/image?url=${encodeURIComponent(imgUrl)}&w=1080&q=75`;
+    }
+    
+    img.src = imgUrl;
     img.onload = () => {
       texture.image = img;
       this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
@@ -498,7 +505,7 @@ class App {
     this.renderer = new Renderer({
       alpha: true,
       antialias: true,
-      dpr: Math.max(window.devicePixelRatio || 1, 2)
+      dpr: Math.min(window.devicePixelRatio || 1, 2)
     });
     this.gl = this.renderer.gl;
     this.gl.clearColor(0, 0, 0, 0);
@@ -514,8 +521,8 @@ class App {
   }
   createGeometry() {
     this.planeGeometry = new Plane(this.gl, {
-      heightSegments: 50,
-      widthSegments: 100
+      heightSegments: 15,
+      widthSegments: 30
     });
   }
   createMedias(items, bend = 1, textColor, borderRadius, font, imageBgColor) {
@@ -680,16 +687,16 @@ class App {
     window.addEventListener('resize', this.boundOnResize);
     
     // Attach start events to container so it only activates when interacting with the gallery
-    this.container.addEventListener('mousewheel', this.boundOnWheel);
-    this.container.addEventListener('wheel', this.boundOnWheel);
-    this.container.addEventListener('mousedown', this.boundOnTouchDown);
-    this.container.addEventListener('touchstart', this.boundOnTouchDown);
+    this.container.addEventListener('mousewheel', this.boundOnWheel, { passive: true });
+    this.container.addEventListener('wheel', this.boundOnWheel, { passive: true });
+    this.container.addEventListener('mousedown', this.boundOnTouchDown, { passive: true });
+    this.container.addEventListener('touchstart', this.boundOnTouchDown, { passive: true });
 
     // Attach move/up events to window for smooth dragging outside bounds
-    window.addEventListener('mousemove', this.boundOnTouchMove);
-    window.addEventListener('mouseup', this.boundOnTouchUp);
-    window.addEventListener('touchmove', this.boundOnTouchMove);
-    window.addEventListener('touchend', this.boundOnTouchUp);
+    window.addEventListener('mousemove', this.boundOnTouchMove, { passive: true });
+    window.addEventListener('mouseup', this.boundOnTouchUp, { passive: true });
+    window.addEventListener('touchmove', this.boundOnTouchMove, { passive: true });
+    window.addEventListener('touchend', this.boundOnTouchUp, { passive: true });
 
     this.container?.addEventListener('keydown', this.boundOnKeyDown);
   }
