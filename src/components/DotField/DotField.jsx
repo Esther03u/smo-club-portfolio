@@ -35,11 +35,24 @@ const DotField = memo(({
   
   const reactId = useId();
   const glowIdRef = useRef(`dot-field-glow-${reactId.replace(/:/g, '')}`);
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const glowEl = glowRef.current;
     if (!canvas) return;
+
+    let observer;
+    if (typeof IntersectionObserver !== 'undefined') {
+      observer = new IntersectionObserver(
+        (entries) => {
+          isVisibleRef.current = entries[0].isIntersecting;
+        },
+        { threshold: 0 }
+      );
+      observer.observe(canvas);
+    }
+
     const ctx = canvas.getContext('2d', { alpha: true });
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     let resizeTimer;
@@ -114,6 +127,8 @@ const DotField = memo(({
     let frameCount = 0;
 
     function tick() {
+      rafRef.current = requestAnimationFrame(tick);
+      if (!isVisibleRef.current) return;
       frameCount++;
       const dots = dotsRef.current;
       const m = mouseRef.current;
@@ -215,8 +230,6 @@ const DotField = memo(({
       }
 
       ctx.fill();
-
-      rafRef.current = requestAnimationFrame(tick);
     }
 
     doResize();
@@ -233,6 +246,7 @@ const DotField = memo(({
       cancelAnimationFrame(rafRef.current);
       clearInterval(speedInterval);
       clearTimeout(resizeTimer);
+      if (observer) observer.disconnect();
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMouseMove);
     };

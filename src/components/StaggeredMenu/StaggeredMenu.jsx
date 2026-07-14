@@ -389,6 +389,8 @@ export const StaggeredMenu = ({
             alt="Logo"
             className="sm-logo-img"
             draggable={false}
+            fetchPriority="high"
+            decoding="async"
             style={{ height: '40px', width: 'auto', objectFit: 'contain', transform: 'scale(1.6)', transformOrigin: 'left center' }}
           />
         </div>

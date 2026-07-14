@@ -1,17 +1,19 @@
 // @ts-nocheck
 'use client';
 
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MessageCircle, MapPin, Users, ChevronRight, ArrowRight, Camera } from 'lucide-react';
 import TextType from '../components/TextType/TextType';
 import ShinyText from '../components/ShinyText/ShinyText';
-import CircularGallery from '../components/CircularGallery/CircularGallery';
 import StaggeredMenu from '../components/StaggeredMenu/StaggeredMenu';
 import DotField from '../components/DotField/DotField';
 import BorderGlow from '../components/BorderGlow/BorderGlow';
 import SideRays from '../components/SideRays/SideRays';
 import Folder from '../components/Folder';
-import Carousel from '../components/Carousel';
+
+const CircularGallery = dynamic(() => import('../components/CircularGallery/CircularGallery'), { ssr: false });
+const Carousel = dynamic(() => import('../components/Carousel'), { ssr: false });
 
 const menuItems = [
   { label: 'หน้าแรก', ariaLabel: 'Go to home page', link: '#home' },
